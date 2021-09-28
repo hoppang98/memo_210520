@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+header {height:100px; margin-bottom:10px;}
+header .logo {height:100px;}
+header .login-info {height:100px;}
+
+
+footer {height:100px; margin-bottom:10px;}
+
+.sign-up-box {width:550px;}
+.sign-up-table th {width:550px;}
