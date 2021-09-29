@@ -1,14 +1,12 @@
 package com.memo.user;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,33 +39,54 @@ public class UserRestController {
 	}
 	
 	
-	
-	@PostMapping("/sign_up")
-	public Map<String, Object> signUp(
+	// 회원가입 ajax
+	@RequestMapping("/sign_up")
+	public Map<String, Object> signUpForAjax(
 			@RequestParam("loginId") String loginId,
 			@RequestParam("password") String password,
 			@RequestParam("name") String name,
 			@RequestParam("email") String email) {
 		
-		// 비밀번호 암호화 (사실 해싱이 맞다)
+		String encryptPassword = EncryptUtils.md5(password);
+		int row = userBO.addUser(loginId, encryptPassword, name, email);
+		
+		Map<String, Object> result = new HashMap<>();
+		if (row == 1) {
+			result.put("result", "success");
+		} else {
+			result.put("error", "입력 실패");
+		}
+		return result;
+	}
+	
+	//로그인
+	@RequestMapping("/sign_in")
+	public Map<String, Object> signIn(
+			@RequestParam("loginId") String loginId,
+			@RequestParam("password") String password,
+			HttpServletRequest request) {
+		
+		// 파라미터로 받은 비번을 해싱한다
 		String encryptPassword = EncryptUtils.md5(password);
 		
-		// DB user insert
-		User user = userBO.getUser(loginId, encryptPassword);
+		// DB select - 아이디, 해싱된 암호
+		User user = userBO.getUserByLoginIdAndPassword(loginId, encryptPassword);
 		
 		Map<String, Object> result = new HashMap<>();
 		if (user != null) {
+			// 있으면 로그인 성공 (세션에 저장, 로그인 상태를 유지한다)
 			result.put("result", "success");
-			// 로그인 처리 - 세션에 저장(로그인 상태를 유지한다)
+			// 세션저장
 			HttpSession session = request.getSession();
-			session.setAttribute("userLoginId", user.getLoginId());
+			session.setAttribute("userId", user.getId());
 			session.setAttribute("userName", user.getName());	
-			session.setAttribute("userId", user.getId());	
+			session.setAttribute("userLoginId", user.getLoginId());
 		} else {
+			// 없으면 로그인 실패
 			result.put("error", "존재하지 않는 사용자 입니다.");
 		}
 		
-		// 응답값 생성 후 리턴
+		// 결과 리턴
 		return result;
 	}
 }

@@ -7,7 +7,7 @@
 <div class="d-flex justify-content-center">
 	<div class="sign-up-box">
 		<h1 class="mb-4">회원가입</h1>
-		<form id="signUpForm" method="post" action="/user/sign">
+		<form id="signUpForm" method="post" action="/user/sign_up">
 			<table class="sign-up-table table table-bordered">
 				<tr>
 					<th>* 아이디(4자 이상)<br></th>
@@ -131,7 +131,7 @@
 			// 서버에 요청!! 새로운 방법(post ajax)
 			let url = $('#signUpForm').attr('action'); // form태그에서 action값을 가져온다
 			let data = $('#signUpForm').serialize(); // serialize() = form태그에 있는 name이 지정된 input들을 한꺼번에 querry string으로 보낸다. 이 방법 아니면 json으로 구성해야 한다
-			console.log(data);
+			// console.log(data);
 			
 			$.post(url, data)
 			.done(function(data) {
