@@ -1,7 +1,5 @@
 package com.memo.interceptor;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -15,11 +13,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Component
 public class PermissionInterceptor implements HandlerInterceptor {
-	// 권한 제어
+	// 컨트롤러로 가기 전에 인터셉터가 한번 검사
 	
 	// private Logger logger = LoggerFactory.getLogger(PermissionInterceptor.class); -> 아래와 같은 방식
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	private HttpServletResponse response;
 	
 	
 	@Override

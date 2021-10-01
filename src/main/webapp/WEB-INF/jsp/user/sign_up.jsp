@@ -104,7 +104,6 @@
 			
 			if (password != confirmPassword) {
 				alert("비밀번호가 일치하지 않습니다 다시 입력해 주세요.");
-				$('#password').val(''); // 원래 적혀있던 값 초기화
 				$('#confirmPassword').val(''); // 원래 적혀있던 값 초기화
 				return;
 			}
