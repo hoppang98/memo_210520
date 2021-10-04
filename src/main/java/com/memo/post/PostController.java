@@ -52,7 +52,12 @@ public class PostController {
 	}
 	
 	
-	
+	/**
+	 * 글쓰기 화면
+	 * @param request
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/post_create_view")
 	public String postCreateView(Model model) {
 		model.addAttribute("viewName", "post/post_create");

@@ -59,7 +59,7 @@
 			if (file != '') {
 				// file.split('.'); // 파일명을 .기준으로 자른다(배열에 저장)
 				let ext = file.split('.').pop().toLowerCase(); 		// toLowerCase - 모두 소문자로 바꾼다(PNG 확장자명을 소문자로 바꾸기 위해 사용)
-				if ($.inArray(ext, ['jpg, jpeg, png, gif']) == -1) {		// inArray -  배열 안에 괄호 안에 것들이 있는가
+				if ($.inArray(ext, ['jpg', 'jpeg', 'png', 'gif']) == -1) {		// inArray -  배열 안에 괄호 안에 것들이 있는가
 					alert("jpg, jpeg, png, gif만 사용이 가능합니다");
 					$('#file').val(''); // 잘못 올린 파일을 비운다.
 					return;
@@ -68,14 +68,14 @@
 			
 			// 폼태그를 자바스크립트에서 만든다. 
 			let formData = new FormData(); // 변수가 아닌 객체를 만든다.
-			formData.append('subject', subject); // append = 아무것도 없는 폼태그에 데이터를 추가한다. ('만들 내용', 위에서 만든 변수 subject)
-			formData.append('content', content); // append = 아무것도 없는 폼태그에 데이터를 추가한다. ('만들 내용', 위에서 만든 변수 content)
-			formData.append('file', $('#file')[0].files[0]); // (request parameter명(만들 내용), 첫번째 files id태그에 있는 첫번째 files - id로 위에 있는 파일 중 첫번째(0) 파일을 가져온다.)
+			formData.append("subject", subject); // append = 아무것도 없는 폼태그에 데이터를 추가한다. ('만들 내용', 위에서 만든 변수 subject)
+			formData.append("content", content); // append = 아무것도 없는 폼태그에 데이터를 추가한다. ('만들 내용', 위에서 만든 변수 content)
+			formData.append("file", $('#file')[0].files[0]); // (request parameter명(만들 내용), 첫번째 files id태그에 있는 첫번째 files - id로 위에 있는 파일 중 첫번째(0) 파일을 가져온다.)
 			
 			//ajax로 보내기
 			$.ajax({
 				type:'post' // 사진같은 파일은 무조건 post - 그래야 requestbody안에 담겨서 넘어간다.
-				, url:'post/create'
+				, url:'/post/create'
 				, data: formData // 위에 있는 formData 통채로 보낸다.
 				, enctype: 'multipart/form-data' // 파일 업로드와 관련된 필수 설정
 				, processData: false  			// 파일 업로드와 관련된 필수 설정 (true면 파일 자체로 안넘어가고 querry string으로 넘어감 따라서 꼭 true)
@@ -83,7 +83,7 @@
 				, success: function(data) {
 					if(data.result == 'success') {
 						alert("메모가 저장되었습니다.");
-						// 이후 여기다 이동할 링크 걸기
+						location.href = "/post/post_list_view";
 					}
 				}, error: function(e) {
 					alert("메모 저장에 실패했습니다" + e);
