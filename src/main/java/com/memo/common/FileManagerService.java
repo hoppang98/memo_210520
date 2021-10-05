@@ -39,9 +39,29 @@ public class FileManagerService {
 		Path path = Paths.get(filePath + file.getOriginalFilename()); // getOriginalFilename = input에 올린 파일 명이다.
 		Files.write(path, bytes);
 	
-		// 이지미 URL path를 리턴한다.
+		// 이미지 URL path를 리턴한다.
 		// 예) http://localhost/images/miga2400_1645412312/apple.png - 이런 주소를 브라우저에 치면 그림이 나오게
 		return "/images/" + directoryName + file.getOriginalFilename();
 		
+	}
+	
+	public void deleteFile(String imagePath) throws IOException {
+		// 	파라미터 : 	/images/miga2400_1645412312/apple.png - 이런 형식으로 넘어온다.
+		// 실제 경로 :		C:\\손지승\\6_spring_project\\ex\\memo_workspace\\Memo\\images/
+		// 합치면 C:\\손지승\\6_spring_project\\ex\\memo_workspace\\Memo\\images/images/miga2400_1645412312/apple.png
+		// 실제경로 + 파라미터를 하면 images가 겹치기 때문에 한쪽에 파라미터쪽 /images/를 제거한다.
+		Path path = Paths.get(FILE_UPLOAD_PATH + imagePath.replace("/images/", ""));
+		//path는 이미지 경로를 의미
+		if (Files.exists(path)) {
+			// 파일이 존재하면 삭제한다.
+			Files.delete(path);
+		}
+		
+		// 디렉토리 삭제
+		path = path.getParent();
+		if (Files.exists(path)) {
+			// 디렉토리가 존재하면
+			Files.delete(path);
+		}
 	}
 }

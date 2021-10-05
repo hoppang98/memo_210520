@@ -17,4 +17,12 @@ public interface PostDAO {
 			@Param("subject") String subject,
 			@Param("content") String content,
 			@Param("imagePath") String imagePath);
+	
+	public Post selectPost(int id); //여기 id를 postMapper의 WHERE로 보낸다
+	
+	public void updatePost(
+			@Param("id") int id,
+			@Param("subject") String subject,
+			@Param("content") String content,
+			@Param("imagePath") String imagePath);
 }

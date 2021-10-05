@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.memo.post.bo.PostBO;
 import com.memo.post.model.Post;
@@ -59,8 +60,41 @@ public class PostController {
 	 * @return
 	 */
 	@RequestMapping("/post_create_view")
-	public String postCreateView(Model model) {
+	public String postCreateView(Model model, HttpServletRequest request) { // session에 userId가 있는 경우에만 접근 가능(=로그인 상태에서만)
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		if(userId == null) {
+			// 세션에 id가 없으면 로그인 하는 페이지로 이동(redirect)
+			return "redirect:/user/sign_in_view";
+		}
 		model.addAttribute("viewName", "post/post_create");
 		return "template/layout"; // layout에서 ${viewName}.이 계속 바뀌기 때문에 여기서 model을 내려줘야함
+	}
+	
+	/**
+	 * 메모 수정 화면
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/post_detail_view")
+	public String postDeatilView(
+			@RequestParam("postId") int postId, // detail_view는 create_view와 달리 내가 뭘 눌렀는지 정보를 뿌려야한다. (postId값이 파라미터로 필요)
+			Model model,
+			HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		if(userId == null) {
+			// 세션에 id가 없으면 로그인 하는 페이지로 이동(redirect)
+			return "redirect:/user/sign_in_view";
+		}
+		
+		// postId에 해당하는 게시물을 가져와서 model에 담는다
+		Post post = postBO.getPost(postId);
+		model.addAttribute("post", post);
+		model.addAttribute("viewName", "post/post_detail");
+		return "template/layout"; // layout에서 ${viewName}.이 계속 바뀌기 때문에 여기서 model을 내려줘야함 jsp로 보낸다.
+		
 	}
 }
