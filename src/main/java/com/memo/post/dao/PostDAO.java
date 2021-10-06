@@ -10,7 +10,16 @@ import com.memo.post.model.Post;
 @Repository
 public interface PostDAO {
 	
-	public List<Post> selectPostList(int userId); // selectPostList = postMapper의 id값
+	public List<Post> selectPostList( // selectPostList = postMapper의 id값
+			@Param("userId") int userId,
+			@Param("direction") String direction,
+			@Param("standardId") Integer standardId,
+			@Param("limit") int limit); 
+	
+	
+	public int selectIdByUserIdAndSort( // 페이징
+			@Param("userId") int userId, 
+			@Param("sort") String sort);
 	
 	public int insertPost(
 			@Param("userId") int userId,
@@ -25,4 +34,8 @@ public interface PostDAO {
 			@Param("subject") String subject,
 			@Param("content") String content,
 			@Param("imagePath") String imagePath);
+	
+	public void deletePost(int id); // 하나만 넘기면 @Param("postId") param어노테이션 생략 가능
+	
+
 }

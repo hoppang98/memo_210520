@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,7 +34,10 @@ public class PostController {
 	 * @return
 	 */
 	@RequestMapping("/post_list_view")
-	public String postListView(Model model, HttpServletRequest request) {
+	public String postListView(
+			@RequestParam(value = "prevId", required= false) Integer prevIdParam, //이전버튼값 - 컨트롤러가 받아서 bo에 패스
+			@RequestParam(value = "nextId", required= false) Integer nextIdParam, // 다음버튼값 - 컨트롤러가 받아서 bo에 패스
+			Model model, HttpServletRequest request) {
 		
 		// 글 목록들을 가져온다. (로그인된 사용자만)
 		HttpSession session = request.getSession(); // 세션 가져오기
@@ -43,10 +47,30 @@ public class PostController {
 			return "redirect:/user/sign_in_view";
 		}
 		
-		List<Post> postList = postBO.getPostList(userId); // userId에 해당하는 list만 가져온다
+		List<Post> postList = postBO.getPostList(userId, prevIdParam, nextIdParam); // userId에 해당하는 list만 가져온다
+		
+		int prevId = 0;
+		int nextId = 0;
+		if(CollectionUtils.isEmpty(postList) == false) { // CollectionUtils
+			prevId = postList.get(0).getId();
+			nextId = postList.get(postList.size() - 1).getId();
+			
+			// 이전이나 다음이 없는 경우 0으로 세팅한다. (jsp에서 0인지 검사)
+			
+			// 마지막페이지(다음 기준)인 경우 0으로 세팅
+			if (postBO.isLastPage(userId, nextId)) {
+				nextId = 0;
+			}
+			
+			// 첫번째페이지(이전 기준)인 경우 0으로 세팅
+			if (postBO.isFirstPage(userId, prevId)) {
+				prevId = 0;
+			}
+		}
 		
 		// 모델에 담는다
-		
+		model.addAttribute("prevId", prevId); // 처음 값
+		model.addAttribute("nextId", nextId); // 마지막 값
 		model.addAttribute("postList", postList);
 		model.addAttribute("viewName", "post/post_list");
 		return "template/layout"; // layout에서 ${viewName}.이 계속 바뀌기 때문에 여기서 model을 내려줘야함

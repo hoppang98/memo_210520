@@ -23,8 +23,9 @@
 
 			<%-- float를 사용한 정렬을 사용할 때는 1차 상위부모에 clearfix를 해주어야 float를 사용한 아래 태그들에 영향을 주지 않는다. --%>
 			<div class="claerfix">
-				<a href="/post/post_list_view" class="btn btn-secondary float_left">삭제</a>
-
+				<a href="#" id="deleteBtn" class="btn btn-secondary float_left" data-post-id="${post.id}">삭제</a>
+				<%-- 삭제버튼 안에 postId 정보를 심어놓고 script에서 뽑아서 사용, camel케이스 사용 못함(postId(x) post-id(o)) --%>
+				
 				<div class="float-right">
 					<button type="button" id="listBtn" class="btn btn-dark">목록으로</button>
 					<button type="button" id="saveBtn" class="btn btn-primary ml-2" data-post-id="${post.id}">수정</button>
@@ -82,7 +83,7 @@ $(document).ready(function(){
 		// ajax는 뷰에 보낼 수 없다. restcontroller에만 보낸다.
 		$.ajax({
 			type:'put' // post도 상관없는데 put으로 하면 컨트롤러에서 putMapping해야함
-			, url: '/post/update'
+			, url: '/post/update' // ajax url은 뷰로 보내는게 아니다
 			, data: formData
 			, enctype: 'multipart/form-data' // 파일 업로드와 관련된 필수 설정
 			, processData: false  			// 파일 업로드와 관련된 필수 설정 (true면 파일 자체로 안넘어가고 querry string으로 넘어감 따라서 꼭 true)
@@ -96,11 +97,27 @@ $(document).ready(function(){
 				alert("메모 수정에 실패했습니다. 관리자에게 문의해주세요." + e);
 			}
 		});
-		
-		
-		
-		
-		
+	});
+	// 삭제
+	$('#deleteBtn').on('click', function(e) {
+		e.preventDefault(); // 화면 상단으로 올라가는 것 방지
+			
+		let postId = $(this).data('post-id');
+			
+		// ajax 통신으로 삭제 요청
+		$.ajax({
+			type: 'delete'
+			, url: '/post/delete' // ajax url은 뷰로 보내는게 아니다
+			, data: {"postId" : postId} // json형식으로 보낸다.
+			, success: function(data) {
+				if (data.result == 'success') {
+					alert("삭제가 성공했습니다.");
+					location.href="/post/post_list_view";
+				}
+			}, error: function(e) {
+				alert("메모 삭제 실패" + e);
+			}
+		});
 	});
 });
 </script>

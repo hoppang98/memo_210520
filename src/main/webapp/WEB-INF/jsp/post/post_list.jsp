@@ -35,6 +35,17 @@
 			</tbody>
 		</table>
 		
+		<%-- 이전, 다음 버튼 --%>
+		<div class="d-flex justify-content-center">
+			<c:if test="${prevId ne 0}"> <%-- ne = not equal --%>
+				<a href="/post/post_list_view?prevId=${prevId}"> &lt; &lt;이전</a> <%-- &lt; = 특수문자(<) --%>
+			</c:if>
+			<c:if test="${nextId ne 0}">
+				<a href="/post/post_list_view?nextId=${nextId}" class="ml-3">다음 &gt; &gt;</a> <%--&gt; = 특수문자(>) --%>
+			</c:if>
+		</div>
+		
+		
 		<div class="d-flex justify-content-end">
 			<a href="/post/post_create_view" class="btn btn-primary">글쓰기</a>
 		</div>

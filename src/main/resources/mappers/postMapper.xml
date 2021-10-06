@@ -3,7 +3,7 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
  <mapper namespace="com.memo.post.dao.PostDAO">
- 	<select id="selectPostList" parameterType="int" resultType="com.memo.post.model.Post">
+ 	<select id="selectPostList" parameterType="map" resultType="com.memo.post.model.Post">
 		SELECT
 			`id`
 			, `userId`
@@ -16,6 +16,36 @@
 			`post`
 		WHERE
 			`userId` = #{userId}
+		<if test="direction == null">
+		ORDER BY `id` DESC
+		</if>
+
+		<if test="direction == 'prev'"> <!-- 이전 페이징 --> <!-- >는 사용뷸가라서 CDATA사용 -->
+			<![CDATA[
+			AND `id` > #{standardId}
+			]]> 
+		ORDER BY `id` ASC
+		</if>
+		
+		<if test="direction == 'next'"> <!-- 다음 페이징 -->
+			<![CDATA[
+			AND `id` < #{standardId}
+			]]> 
+		ORDER BY `id` DESC
+		</if>
+		
+		LIMIT ${limit}
+ 	</select>
+ 	
+ 	<select id="selectIdByUserIdAndSort" parameterType="map" resultType="int">
+ 		SELECT
+ 			`id`
+ 		FROM
+ 			`post`
+ 		WHERE
+ 			`userId` = #{userId}
+ 		ORDER BY `id` ${sort}
+ 		LIMIT 1
  	</select>
  	
  	<insert id="insertPost" parameterType="map">
@@ -65,4 +95,13 @@
 		WHERE
 			`id` = #{id}
 	</update>
+	
+	<delete id="deletePost" parameterType="int">
+		DELETE
+		
+		FROM
+			`post`
+		WHERE
+			`id` = #{id}
+	</delete>
  </mapper>
